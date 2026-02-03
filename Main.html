@@ -520,7 +520,7 @@
         async (decodedText) => {
           const parsed = parseProjectQR(decodedText);
           if (!parsed) {
-            setStatus(el("projectScanStatus"), "Invalid Vessel QR Code. Expected: version;project_name;serial_number;type.", "error");
+            setStatus(el("projectScanStatus"), "Invalid Vessel QR Code. Please scan the correct QR Code.", "error");
             el("btnOkProject").disabled = true;
             return;
           }
@@ -553,7 +553,7 @@
         async (decodedText) => {
           const parsed = parseEmployeeQR(decodedText);
           if (!parsed) {
-            setStatus(el("empScanStatus"), "Invalid Employee QR Code. Expected: EMP;employee_id;employee_name;station.", "error");
+            setStatus(el("empScanStatus"), "Invalid Employee QR Code. Please scan the correct QR Code.", "error");
             el("btnOkEmployee").disabled = true;
             return;
           }
