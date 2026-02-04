@@ -184,6 +184,7 @@
       <div class="row">
         <button id="btnOkProject" disabled>OK</button>
       </div>
+    </div>
 
     <!-- PAGE 2 -->
     <div class="page card" id="page2">
@@ -215,6 +216,8 @@
       <div class="row">
         <button id="btnOkEmployee" disabled>OK</button>
       </div>
+    
+    </div>
 
     <!-- PAGE 3 -->
     <div class="page card" id="page3">
@@ -602,6 +605,7 @@
     async function toggleEmpScan() {
       const btn = el("btnEmpScanToggle");
 
+      // STOP scanning
       if (empScanning) {
         try { await employeeScanner.stop(); } catch {}
         empScanning = false;
@@ -614,6 +618,7 @@
         return;
       }
 
+      // START scanning
       try {
         setStatus(el("empScanStatus"), "Starting camera...", "ok");
         btn.disabled = true;
@@ -633,7 +638,8 @@
             paintEmployeeUI();
             setStatus(el("empScanStatus"), "Employee QR parsed. Press OK.", "ok");
             el("btnOkEmployee").disabled = false;
-
+            
+            // Auto stop after success
             await employeeScanner.stop();
             empScanning = false;
 
@@ -660,7 +666,6 @@
         btn.disabled = false;
       }
     }
-
 
     el("btnEmpScanToggle").addEventListener("click", toggleEmpScan);
 
