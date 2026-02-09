@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pneumatic Test Timer</title>
+
+  <!-- QR library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- My CSS file -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="wrap">
+    <h2>Pneumatic Test Timer</h2>
+
+    <div class="stepbar">
+      <div class="step" id="step1"><div></div></div>
+      <div class="step" id="step2"><div></div></div>
+      <div class="step" id="step3"><div></div></div>
+    </div>
+
+    <!-- PAGE 1 (Employee First) -->
+    <div class="page card" id="page1">
+      <div class="pill">Scan Employee QR</div>
+      <div class="divider"></div>
+
+      <div id="employeeReader" style="width:100%"></div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button id="btnEmpScanToggle" class="btn-secondary">Start Scan</button>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="divider"></div>
+
+      <div class="kv">
+        <div><b>Employee ID:</b> <span class="mono" id="empIdText">-</span></div>
+        <div><b>Name:</b> <span class="mono" id="empNameText">-</span></div>
+        <div><b>Station:</b> <span class="mono" id="empStationText">-</span></div>
+      </div>
+
+      <div class="status" id="empScanStatus"></div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button id="btnOkEmployee" disabled>OK</button>
+      </div>
+    </div>
+
+
+
+   <!-- PAGE 2 (Vessel Second) -->
+    <div class="page card" id="page2">
+      <div class="pill">Scan Vessel QR Code</div>
+      <div class="divider"></div>
+
+      <div id="projectReader" style="width:100%"></div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button id="btnProjectScanToggle" class="btn-secondary">Start Scan</button>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="divider"></div>
+
+      <div class="kv">
+        <div><b>Project Name:</b> <span class="mono" id="projNameText">-</span></div>
+        <div><b>Serial No:</b> <span class="mono" id="serialText">-</span></div>
+        <div><b>Type:</b> <span class="mono" id="typeText">-</span></div>
+      </div>
+
+      <br>
+      <div class="status" id="projectScanStatus"></div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button id="btnOkProject" disabled>OK</button>
+      </div>
+    </div>
+
+
+
+    <!-- PAGE 3 -->
+    <div class="page card" id="page3">
+      <div class="pill">Timer</div>
+      <div class="divider"></div>
+
+      <div class="kv">
+        <div><b>Serial No:</b> <span class="mono" id="p3Serial">-</span></div>
+        <div><b>Project:</b> <span class="mono" id="p3Project">-</span></div>
+        <div><b>Type:</b> <span class="mono" id="p3Type">-</span></div>
+        <div><b>Employee:</b> <span class="mono" id="p3Emp">-</span></div>
+        <div><b>Station:</b> <span class="mono" id="p3Station">-</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="center-image">
+        <img src="images/Vessel-1.jpeg" alt="Pneumatic Test" />
+      </div>
+
+      <div class="image-instruction">
+        Tekan butang <b>Start</b> apabila vessel dimasukkan ke dalam kolam
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="time mono" id="timerText">00:00:00</div>
+
+      <div class="row">
+        <button id="btnStart" disabled>Start</button>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="row">
+        <button id="btnPass" class="btn-passed" disabled>Pass</button>
+        <button id="btnLeak" class="btn-warn" disabled>Leak</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="kv" id="employee-info">
+        <div><b>Segment ID:</b> <span class="mono" id="segmentIdText">-</span></div>
+        <div><b>Start:</b> <span class="mono" id="startTsText">-</span></div>
+        <div><b>End:</b> <span class="mono" id="stopTsText">-</span></div>
+      </div>
+
+      <div class="status" id="actionStatus"></div>
+    </div>
+  </div>
+
+  <!-- Leak modal -->
+  <div id="leakModal">
+    <div class="box">
+      <div class="pill">Leak Details</div>
+      <div class="divider"></div>
+
+      <label class="small">Reason</label>
+      <select id="leakReason">
+        <option value="">-- Select --</option>
+        <option value="Rework">Rework</option>
+        <option value="Npt">NPT</option>
+        <option value="Others">Others</option>
+      </select>
+
+      <div style="height:10px"></div>
+
+      <label class="small" id="remarkLabel" style="display:none">Remark (required if the reason is "Others")</label>
+      <textarea id="leakRemark" style="display:none"></textarea>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button id="btnLeakCancel" class="btn-secondary" type="button">Cancel</button>
+        <button id="btnLeakConfirm" type="button">Confirm</button>
+      </div>
+
+      <div class="status" id="leakModalStatus"></div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="loadingBox">
+      <div class="spinner"></div>
+      <div id="loadingText">Submitting…</div>
+      <div class="small" style="margin-top:6px; color:#6b7280;">Please wait</div>
+    </div>
+  </div>
+
+  <!-- My JS file -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
