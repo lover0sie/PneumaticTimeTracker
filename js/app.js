@@ -678,6 +678,7 @@ el("btnStart").addEventListener("click", async () => {
 
   // Lock state first
   isRunning = true;
+  localStorage.setItem(LS.running, "1");
   el("btnStart").disabled = true;
   canEnableTimerActions();
 
@@ -878,21 +879,45 @@ function resumeIfRunning(){
   return true;
 }
 
-function initApp(){
-  // Load any saved scanned info first (so UI can show properly)
+function initApp() {
+  // Load saved scanned info and confirmations
   loadWizardStateFromStorage();
 
-  // If there is an active running timer, resume it and stay on Timer page
-  const resumed = resumeIfRunning();
-  if (resumed) return;
+  // 1) If a test is running, always resume and stay on Timer page
+  if (resumeIfRunning()) {
+    return;
+  }
 
-  // If not running, restore correct step from confirmed flags
-  goToCorrectStepIfNotRunning();
+  // 2) Not running: continue normal flow based on what is already confirmed
+  // Your new flow is: Employee -> Vessel -> Timer
+
+  if (!employeeConfirmed) {
+    setStep(1);
+    paintEmployeeUI();
+    paintProjectUI();
+    el("btnOkEmployee").disabled = !employeeData.empId;
+    setStatus(el("empScanStatus"), employeeData.empId ? "Parsed. Press OK to confirm." : "Ready to scan employee QR.", "ok");
+    setStatus(el("projectScanStatus"), "Scan vessel QR after employee is confirmed.", "ok");
+    return;
+  }
+
+  if (!projectConfirmed) {
+    setStep(2);
+    paintEmployeeUI();
+    paintProjectUI();
+    el("btnOkProject").disabled = !projectData.serial;
+    setStatus(el("projectScanStatus"), projectData.serial ? "Parsed. Press OK to confirm." : "Ready to scan vessel QR.", "ok");
+    return;
+  }
+
+  // Both confirmed but not running yet: show Timer page ready to start
+  setStep(3);
+  paintPage3Header();
+  canEnableTimerActions();
+  setStatus(el("actionStatus"), "Ready. Press Start to begin.", "ok");
 }
 
 initApp();
-
-
 /* ============================================================================
   18) Keep timer display correct when app becomes active again
 
